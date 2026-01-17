@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body style="background:#000; color:#00d4ff; display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif;">
+    <div style="text-align:center;">
+        <h2>Personal Cloud PC</h2>
+        <button id="btn" style="padding:15px 30px; cursor:pointer; background:#00d4ff; border:none; border-radius:5px; font-weight:bold;">
+            LAUNCH BROWSER
+        </button>
+        <p id="status" style="margin-top:15px; color:#888;">Ready</p>
+    </div>
+
+    <script>
+        document.getElementById('btn').onclick = async () => {
+            const btn = document.getElementById('btn');
+            const status = document.getElementById('status');
+            
+            btn.disabled = true;
+            status.innerText = "Cleaning up & Restoring data...";
+
+            try {
+                // This calls your serverless function
+                const res = await fetch('/api/hyperbeam', { method: 'POST' });
+                const data = await res.json();
+
+                if (data.embed_url) {
+                    status.innerText = "✅ Done!";
+                    window.open(data.embed_url, '_blank');
+                } else {
+                    status.innerText = "❌ Error starting session.";
+                }
+            } catch (e) {
+                status.innerText = "❌ Server error.";
+            } finally {
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>
